@@ -32,14 +32,52 @@ function addNewToDo(event) {
       localStorage.setItem("data", "[]");
     }
 
-    let old_todo = JSON.parse(localStorage.getItem("data"));
-    old_todo.push(NEW_TODO_VALUE);
+    // let old_todo = JSON.parse(localStorage.getItem("data"));
+    // old_todo.push(NEW_TODO_VALUE);
 
-    localStorage.setItem("data", JSON.stringify(old_todo));
-    inputNewToDo.value = "";
+    // localStorage.setItem("data", JSON.stringify(old_todo));
+    // inputNewToDo.value = "";
 
-    updateNewTodo();
+    // updateNewTodo();
+    const inputFilter = JSON.parse(localStorage.getItem("data"));
+    let inputSomeResult = inputFilter.some(filterStorage);
+
+    let inputValidation = new Promise((resolve, reject) => {
+      let someValue = false;
+
+      if (inputSomeResult === someValue) {
+        resolve("Validated");
+      } else {
+        reject("This to-do is already declared.");
+      }
+    });
+
+    inputValidation
+      .then(() => {
+        let old_todo = JSON.parse(localStorage.getItem("data"));
+        old_todo.push(NEW_TODO_VALUE);
+
+        localStorage.setItem("data", JSON.stringify(old_todo));
+        inputNewToDo.value = "";
+
+        updateNewTodo();
+      })
+      .catch((error) => {
+        warningText.innerHTML += error;
+
+        inputNewToDo.onclick = () => {
+          warningText.innerHTML = "";
+        };
+
+        inputNewToDo.onkeydown = () => {
+          warningText.innerHTML = "";
+        };
+      });
   }
+}
+
+function filterStorage(data) {
+  return data === inputNewToDo.value.toLowerCase();
 }
 
 function updateNewTodo() {
@@ -83,7 +121,8 @@ function loopTheList(element) {
   let htmlElement = "<div>";
   for (let i = 0; i < element.length; i++) {
     htmlElement += `<div class="to-do-list" id="todoListBracket">
-  <div class="checkbox-container" data-check="incomplete" onclick="checkToDoItemComplete(this)">
+  <div class="checkbox-container" data-check="incomplete" 
+  onclick="checkToDoItemComplete(this)">
     <div class="checkbox">
       <img
         src="images/icon-check.svg"
@@ -93,7 +132,8 @@ function loopTheList(element) {
     </div>
   </div>
   <div class="to-do-text" data-check="incomplete">${element[i]}</div>
-  <div class="close-button-container closeBtn" data-active="false" onclick="deleteItem(this)">
+  <div class="close-button-container closeBtn" data-active="false" 
+  onclick="deleteItem(this)">
     <div class="close-button">
       <img src="images/icon-cross.svg" alt="close button" />
     </div>
