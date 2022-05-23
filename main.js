@@ -32,13 +32,6 @@ function addNewToDo(event) {
       localStorage.setItem("data", "[]");
     }
 
-    // let old_todo = JSON.parse(localStorage.getItem("data"));
-    // old_todo.push(NEW_TODO_VALUE);
-
-    // localStorage.setItem("data", JSON.stringify(old_todo));
-    // inputNewToDo.value = "";
-
-    // updateNewTodo();
     const inputFilter = JSON.parse(localStorage.getItem("data"));
     let inputSomeResult = inputFilter.some(filterStorage);
 
@@ -72,6 +65,13 @@ function addNewToDo(event) {
         inputNewToDo.onkeydown = () => {
           warningText.innerHTML = "";
         };
+        inputNewToDo.onmouseout = () => {
+          warningText.innerHTML = "";
+        };
+
+        body.onscroll = () => {
+          warningText.innerHTML = "";
+        };
       });
   }
 }
@@ -98,12 +98,15 @@ function deleteItem(thisElement) {
 function checkToDoItemComplete(thisElement) {
   LOCAL_STORAGE = JSON.parse(localStorage.getItem("data"));
   let indexElement = thisElement.parentElement.childNodes[3].innerHTML;
+  let textAttribute = thisElement.parentElement.childNodes[3];
   let checkBtnElement = thisElement.parentElement.childNodes[1];
 
   let indexValue = LOCAL_STORAGE.indexOf(indexElement);
 
   if (checkBtnElement.dataset.check === "incomplete") {
     completedToDo(indexValue);
+    textAttribute.style.cssText =
+      "text-decoration: line-through; color: hsl(236, 9%, 61%)";
     checkBtnElement.setAttribute("data-check", "completed");
   } else {
     console.log("incomplete");

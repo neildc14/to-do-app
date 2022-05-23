@@ -149,6 +149,14 @@ h1 {
   outline: none !important;
 }
 
+.warningText {
+  background-color: hsl(0, 0%, 100%);
+}
+
+[data-theme="darkTheme"] .warningText {
+  background-color: hsl(235, 21%, 11%);
+}
+
 /*---to dos container --*/
 .to-do-lists-container {
   position: absolute;
