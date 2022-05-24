@@ -96,11 +96,14 @@ function deleteItem(thisElement) {
 
   LOCAL_STORAGE.splice(LOCAL_STORAGE.indexOf(indexElement), 1);
 
-  if (COMPLETED_TODO.includes(indexElement)) {
-    COMPLETED_TODO.splice(COMPLETED_TODO.indexOf(indexElement), 1);
+  if (localStorage.getItem("completedToDos") == null) {
+    localStorage.setItem("completedToDos", "[]");
   }
 
-  localStorage.setItem("completedToDos", JSON.stringify(COMPLETED_TODO));
+  if (COMPLETED_TODO.includes(indexElement)) {
+    COMPLETED_TODO.splice(COMPLETED_TODO.indexOf(indexElement), 1);
+    localStorage.setItem("completedToDos", JSON.stringify(COMPLETED_TODO));
+  }
   localStorage.setItem("data", JSON.stringify(LOCAL_STORAGE));
 
   updateNewTodo();
@@ -154,16 +157,14 @@ function completedToDo(index) {
 function clearCompleted() {
   LOCAL_STORAGE = JSON.parse(localStorage.getItem("data"));
   COMPLETED_TODO = JSON.parse(localStorage.getItem("completedToDos"));
-  if (LOCAL_STORAGE.includes(COMPLETED_TODO)) {
-    // LOCAL_STORAGE.splice(LOCAL_STORAGE.indexOf(COMPLETED_TODO), 1);
-    console.log(LOCAL_STORAGE, COMPLETED_TODO);
+
+  COMPLETED_TODO.forEach((val) => {
+    LOCAL_STORAGE.splice(LOCAL_STORAGE.indexOf(val), 1);
+    localStorage.setItem("data", JSON.stringify(LOCAL_STORAGE));
+    LOCAL_STORAGE;
     localStorage.removeItem("completedToDos");
-    LOCAL_STORAGE = JSON.parse(localStorage.getItem("data"));
-    COMPLETED_TODO = JSON.parse(localStorage.getItem("completedToDos"));
     updateNewTodo();
-  }
-  console.log("dssdds");
-  console.log(LOCAL_STORAGE, COMPLETED_TODO);
+  });
 }
 
 /*HTML EXECUTION TEMPLATE */
