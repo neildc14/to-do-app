@@ -84,8 +84,8 @@ function ErrorReactionHandler() {
 
 function updateNewTodo() {
   let LOCAL_STORAGE = JSON.parse(localStorage.getItem("data"));
-
-  loopTheList(LOCAL_STORAGE);
+  let COMPLETED_TODO = JSON.parse(localStorage.getItem("completedToDos"));
+  loopTheList(LOCAL_STORAGE, COMPLETED_TODO);
 }
 
 function deleteItem(thisElement) {
@@ -95,10 +95,13 @@ function deleteItem(thisElement) {
   let indexElement = thisElement.parentElement.childNodes[3].innerHTML;
 
   LOCAL_STORAGE.splice(LOCAL_STORAGE.indexOf(indexElement), 1);
-  COMPLETED_TODO.splice(COMPLETED_TODO.indexOf(indexElement), 1);
 
-  localStorage.setItem("data", JSON.stringify(LOCAL_STORAGE));
+  if (COMPLETED_TODO.includes(indexElement)) {
+    COMPLETED_TODO.splice(COMPLETED_TODO.indexOf(indexElement), 1);
+  }
+
   localStorage.setItem("completedToDos", JSON.stringify(COMPLETED_TODO));
+  localStorage.setItem("data", JSON.stringify(LOCAL_STORAGE));
 
   updateNewTodo();
   console.log(JSON.parse(localStorage.getItem("completedToDos")));
@@ -119,6 +122,12 @@ function checkToDoItemComplete(thisElement) {
   } else {
     checkBtnElement.setAttribute("data-check", "incomplete");
     textAttribute.style.cssText = "text-decoration: none;";
+
+    let COMPLETED_TODO = JSON.parse(localStorage.getItem("completedToDos"));
+    COMPLETED_TODO.splice(COMPLETED_TODO.indexOf(indexElement), 1);
+    localStorage.setItem("completedToDos", JSON.stringify(COMPLETED_TODO));
+
+    updateNewTodo();
   }
 }
 
@@ -142,11 +151,30 @@ function completedToDo(index) {
   }
 }
 
+function clearCompleted() {
+  LOCAL_STORAGE = JSON.parse(localStorage.getItem("data"));
+  COMPLETED_TODO = JSON.parse(localStorage.getItem("completedToDos"));
+  if (LOCAL_STORAGE.includes(COMPLETED_TODO)) {
+    // LOCAL_STORAGE.splice(LOCAL_STORAGE.indexOf(COMPLETED_TODO), 1);
+    console.log(LOCAL_STORAGE, COMPLETED_TODO);
+    localStorage.removeItem("completedToDos");
+    LOCAL_STORAGE = JSON.parse(localStorage.getItem("data"));
+    COMPLETED_TODO = JSON.parse(localStorage.getItem("completedToDos"));
+    updateNewTodo();
+  }
+  console.log("dssdds");
+  console.log(LOCAL_STORAGE, COMPLETED_TODO);
+}
+
 /*HTML EXECUTION TEMPLATE */
-function loopTheList(element) {
-  let completed_todo = JSON.parse(localStorage.getItem("completedToDos"));
-  console.log(completed_todo.length);
-  let toDoCounter = element.length - completed_todo.length;
+function loopTheList(element, completed) {
+  let toDoCounter;
+  if (completed !== null) {
+    toDoCounter = element.length - completed.length;
+  } else {
+    toDoCounter = element.length;
+  }
+
   let htmlElement = "<div>";
   for (let i = 0; i < element.length; i++) {
     htmlElement += `<div class="to-do-list" id="todoListBracket">
