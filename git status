@@ -1,0 +1,8 @@
+[33mb5535db[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m stable version of fully functional add,delete,update,read. filters is left to do
+[33m42e69b7[m fixed the filter with right index
+[33mc609cf8[m created checkToDoItemComplete that checks the completed item, proceed to counting the checked but need to setup the set() to have a unique key value pair in the locaStorage
+[33m3d8f856[m added delete function, completedToDoItem function is undergoing
+[33md844504[m auto update list when add new to do is working, delete function is next
+[33m5df6c54[m initial state of loop initiation. need to auto update the list
+[33mb18c68c[m done creating the header container, procede to to-do-lists-container
+[33me236fb5[m phase 1

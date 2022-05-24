@@ -3,9 +3,7 @@ const themeProviderBtn = document.getElementById("themeProvider");
 const body = document.querySelector("body");
 const header = document.querySelector("header");
 const toDoLists = document.getElementById("toDoLists");
-const todoListBracket = document.getElementById("odoListBracket");
-
-//variable for inputs
+const todoListBracket = document.getElementById("todoListBracket");
 const inputNewToDo = document.getElementById("inputNewToDo");
 
 /*themprovider */
@@ -58,20 +56,7 @@ function addNewToDo(event) {
       .catch((error) => {
         warningText.innerHTML += error;
 
-        inputNewToDo.onclick = () => {
-          warningText.innerHTML = "";
-        };
-
-        inputNewToDo.onkeydown = () => {
-          warningText.innerHTML = "";
-        };
-        inputNewToDo.onmouseout = () => {
-          warningText.innerHTML = "";
-        };
-
-        body.onscroll = () => {
-          warningText.innerHTML = "";
-        };
+        ErrorReactionHandler();
       });
   }
 }
@@ -80,19 +65,43 @@ function filterStorage(data) {
   return data === inputNewToDo.value.toLowerCase();
 }
 
+function ErrorReactionHandler() {
+  inputNewToDo.onclick = () => {
+    return (warningText.innerHTML = "");
+  };
+
+  inputNewToDo.onkeydown = () => {
+    return (warningText.innerHTML = "");
+  };
+  inputNewToDo.onmouseout = () => {
+    return (warningText.innerHTML = "");
+  };
+
+  body.onscroll = () => {
+    return (warningText.innerHTML = "");
+  };
+}
+
 function updateNewTodo() {
   let LOCAL_STORAGE = JSON.parse(localStorage.getItem("data"));
+
   loopTheList(LOCAL_STORAGE);
 }
 
 function deleteItem(thisElement) {
   LOCAL_STORAGE = JSON.parse(localStorage.getItem("data"));
+  let COMPLETED_TODO = JSON.parse(localStorage.getItem("completedToDos"));
+
   let indexElement = thisElement.parentElement.childNodes[3].innerHTML;
-  console.log(LOCAL_STORAGE.indexOf(indexElement));
+
   LOCAL_STORAGE.splice(LOCAL_STORAGE.indexOf(indexElement), 1);
+  COMPLETED_TODO.splice(COMPLETED_TODO.indexOf(indexElement), 1);
+
   localStorage.setItem("data", JSON.stringify(LOCAL_STORAGE));
+  localStorage.setItem("completedToDos", JSON.stringify(COMPLETED_TODO));
 
   updateNewTodo();
+  console.log(JSON.parse(localStorage.getItem("completedToDos")));
 }
 
 function checkToDoItemComplete(thisElement) {
@@ -101,26 +110,43 @@ function checkToDoItemComplete(thisElement) {
   let textAttribute = thisElement.parentElement.childNodes[3];
   let checkBtnElement = thisElement.parentElement.childNodes[1];
 
-  let indexValue = LOCAL_STORAGE.indexOf(indexElement);
-
   if (checkBtnElement.dataset.check === "incomplete") {
-    completedToDo(indexValue);
     textAttribute.style.cssText =
       "text-decoration: line-through; color: hsl(236, 9%, 61%)";
     checkBtnElement.setAttribute("data-check", "completed");
+
+    completedToDo(indexElement);
   } else {
-    console.log("incomplete");
     checkBtnElement.setAttribute("data-check", "incomplete");
+    textAttribute.style.cssText = "text-decoration: none;";
   }
 }
 
 function completedToDo(index) {
-  console.log(index);
+  if (localStorage.getItem("completedToDos") == null) {
+    localStorage.setItem("completedToDos", "[]");
+  }
+
+  let indexofList = index.toString();
+  console.log(indexofList);
+
+  let COMPLETED_TODO = JSON.parse(localStorage.getItem("completedToDos"));
+
+  if (!COMPLETED_TODO.includes(indexofList)) {
+    COMPLETED_TODO.push(indexofList);
+
+    localStorage.setItem("completedToDos", JSON.stringify(COMPLETED_TODO));
+    console.log(JSON.parse(localStorage.getItem("completedToDos")));
+
+    updateNewTodo();
+  }
 }
 
 /*HTML EXECUTION TEMPLATE */
 function loopTheList(element) {
-  let toDoCounter = element.length;
+  let completed_todo = JSON.parse(localStorage.getItem("completedToDos"));
+  console.log(completed_todo.length);
+  let toDoCounter = element.length - completed_todo.length;
   let htmlElement = "<div>";
   for (let i = 0; i < element.length; i++) {
     htmlElement += `<div class="to-do-list" id="todoListBracket">
@@ -151,7 +177,7 @@ function loopTheList(element) {
     <div class="to-do-filter-active filter">Active</div>
     <div class="to-do-filter-all filter">Completed</div>
   </div>
-  <div class="to-do-filter-clear-completed item-filter">
+  <div class="to-do-filter-clear-completed item-filter" onclick="clearCompleted()">
     Clear Completed
   </div>
 </div>
